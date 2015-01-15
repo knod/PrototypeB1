@@ -17,12 +17,14 @@ var Engine = Matter.Engine,
 var _engine = Engine.create(document.body);
 
 // create two boxes and a ground
-var boxA = Bodies.rectangle(400, 200, 80, 80);
+var playerBox = Bodies.rectangle(400, 200, 40, 40);
+playerBox.frictionAir = 0.07;
+
 var boxB = Bodies.rectangle(450, 50, 80, 80);
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 
 // add all of the bodies to the world
-World.add(_engine.world, [boxA, boxB, ground]);
+World.add(_engine.world, [playerBox, boxB, ground]);
 
 // run the engine
 Engine.run(_engine);
@@ -31,6 +33,9 @@ Engine.run(_engine);
 // ===================
 // MY STUFF
 // ===================
+// Matter.js module aliases
+var Body = Matter.Body;
+
 // Must create _engine.render this way? Not in docs, derived from
 // source code
 var _render = _engine.render.controller.create(_engine.render)
@@ -71,19 +76,125 @@ _sceneEvents.push(
 
 );
 
-// Keyboard Events (testing)
-// var _canvas = _render.canvas;
 
-document.addEventListener( "keydown", function (event) {
+// Movement
+var moveSpeed = 0.05;
 
-	_render.controller.setBackground( _render, 'green' );
+var moveForce = function ( body, xForce, yForce ) {
 
+
+};  // end moveForce
+
+
+var moveUp = function ( body ) {
+
+	Body.applyForce( body, { x: 0, y: 0 }, { 
+		x: 0, 
+		y: -moveSpeed
+	});
+
+};  // end moveUp()
+
+var moveDown = function ( body ) {
+
+	Body.applyForce( body, { x: 0, y: 0 }, { 
+		x: 0, 
+		y: moveSpeed
+	});
+
+};  // end moveDown()
+
+var moveLeft = function ( body ) {
+
+	Body.applyForce( body, { x: 0, y: 0 }, { 
+		x: -moveSpeed, 
+		y: 0
+	});
+
+};  // end moveLeft()
+
+var moveRight = function ( body ) {
+
+	Body.applyForce( body, { x: 0, y: 0 }, { 
+		x: moveSpeed, 
+		y: 0
+	});
+
+};  // end moveRight()
+
+// Diagonals
+var moveUpLeft = function ( body ) {
+	moveUp( body );
+	moveLeft( body );
+};  // end moveUpLeft()
+
+var moveDownLeft = function ( body ) {
+	moveDown( body );
+	moveLeft( body );
+};  // end moveDownLeft()
+
+var moveUpRight = function ( body ) {
+	moveUp( body );
+	moveRight( body );
+};  // end moveUpRight()
+
+var moveDownRight = function ( body ) {
+	moveDown( body );
+	moveRight( body );
+};  // end moveDownRight()
+
+// Keypress library
+var keypressjs = new window.keypress.Listener();
+
+// Template
+keypressjs.register_combo({
+    "keys"              : null,
+    "on_keydown"        : null,
+    "on_keyup"          : null,
+    "on_release"        : null,
+    "this"              : undefined,
+    "prevent_default"   : false,
+    "prevent_repeat"    : false,
+    "is_unordered"      : false,
+    "is_counting"       : false,
+    "is_exclusive"      : false,
+    "is_solitary"       : false,
+    "is_sequence"       : false
 });
 
-document.addEventListener( "keyup", function (event) {
+var moveUpPlayer = moveUp.bind( null, playerBox ),
+	moveDownPlayer = moveDown.bind( null, playerBox ),
+	moveLeftPlayer = moveLeft.bind( null, playerBox ),
+	moveRightPlayer = moveRight.bind( null, playerBox ),
+	moveUpLeftPlayer = moveUpLeft.bind( null, playerBox ),
+	moveDownLeftPlayer = moveDownLeft.bind( null, playerBox ),
+	moveUpRightPlayer = moveUpRight.bind( null, playerBox ),
+	moveDownRightPlayer = moveDownRight.bind( null, playerBox );
 
-	_render.controller.setBackground( _render, 'black' );
-
+// Up
+keypressjs.register_combo({
+    "keys"              : "w",
+    "on_keydown"        : moveUpPlayer,
+    "prevent_default"   : true
 });
 
+// Down
+keypressjs.register_combo({
+    "keys"              : "s",
+    "on_keydown"        : moveDownPlayer,
+    "prevent_default"   : true
+});
 
+// Left
+keypressjs.register_combo({
+    "keys"              : "a",
+    "on_keydown"        : moveLeftPlayer,
+    "prevent_default"   : true
+});
+
+// Right
+keypressjs.register_combo({
+    "keys"              : "d",
+    "on_keydown"        : moveRightPlayer,
+    "prevent_default"   : true
+});
