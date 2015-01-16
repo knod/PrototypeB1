@@ -37,10 +37,10 @@ var camera =
     FAR);
 
 var camera = new THREE.OrthographicCamera(
-    WIDTH/-2,
-    WIDTH/2,
-    HEIGHT/-2,
-    HEIGHT/2,
+    0,
+    WIDTH,
+    0,
+    HEIGHT,
     -100,
     100
 );
