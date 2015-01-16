@@ -11,8 +11,8 @@ http://www.tonicodes.net/blog/using-an-existing-canvas-element-for-three-js/
 
 // http://aerotwist.com/tutorials/getting-started-with-three-js/
 // set the scene size
-var WIDTH = 400,
-  HEIGHT = 300;
+var WIDTH = 800,
+  HEIGHT = 600;
 
 // set some camera attributes
 var VIEW_ANGLE = 45,
@@ -29,6 +29,7 @@ var viewport = document.getElementById( 'viewport' );
 // create a WebGL renderer, camera
 // and a scene
 var renderer = new THREE.WebGLRenderer({ canvas: viewport });
+
 var camera =
   new THREE.PerspectiveCamera(
     VIEW_ANGLE,
@@ -36,14 +37,10 @@ var camera =
     NEAR,
     FAR);
 
-var camera = new THREE.OrthographicCamera(
-    0,
-    WIDTH,
-    0,
-    HEIGHT,
-    -100,
-    100
-);
+// // Test, not working
+// var camera = new THREE.OrthographicCamera(
+// 	0, HEIGHT, 0, WIDTH, 100, -100
+// );
 
 var scene = new THREE.Scene();
 
@@ -53,6 +50,9 @@ scene.add(camera);
 // the camera starts at 0,0,0
 // so pull it back
 camera.position.z = 1000;
+camera.position.set( WIDTH/2, HEIGHT/2, 1000 );
+// // Test, not working
+// camera.position.set(-30, 40, 30);
 
 // // start the renderer
 // renderer.setSize(WIDTH, HEIGHT);
@@ -109,15 +109,19 @@ scene.add(pointLight);
 
 var playerCube = new THREE.Mesh( new THREE.BoxGeometry( 40, 40, 40 ), new THREE.MeshNormalMaterial() );
 playerCube.position.x = 400;
-playerCube.position.y = 200;
+playerCube.position.y = HEIGHT - 200;
 playerCube.position.z = 0;
 scene.add( playerCube );
 
 var cubeB = new THREE.Mesh( new THREE.BoxGeometry( 80, 80, 80 ), new THREE.MeshNormalMaterial() );
 cubeB.position.x = 450;
-cubeB.position.y = 50;
+cubeB.position.y = HEIGHT - 50;
 playerCube.position.z = 0;
 scene.add( cubeB );
+
+
+var axes = new THREE.AxisHelper(20)
+scene.add(axes)
 
 
 // draw!
