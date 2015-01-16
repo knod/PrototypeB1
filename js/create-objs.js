@@ -1,3 +1,4 @@
+// Created 01/14/15
 
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
         /**/b2BodyDef = Box2D.Dynamics.b2BodyDef,

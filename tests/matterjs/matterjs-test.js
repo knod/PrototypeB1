@@ -1,4 +1,4 @@
-/* 01/15/2015
+/* Created 01/15/2015
 
 Resources:
 https://github.com/liabru/matter-js/wiki/Getting-started#usage-examples
@@ -114,19 +114,19 @@ var afterUpdate = function ( event ) {
 Events.on( _engine, "afterUpdate",  afterUpdate );
 
 
-var moveLeft = function ( body ) {
+var moveLeft = function () {
 	xForce = -moveSpeed;
 };  // end moveLeft()
 
-var moveRight = function ( body ) {
+var moveRight = function () {
 	xForce = moveSpeed;
 };  // end moveRight()
 
-var moveUp = function ( body ) {
+var moveUp = function () {
 	yForce = -moveSpeed;
 };  // end moveUp()
 
-var moveDown = function ( body ) {
+var moveDown = function () {
 	yForce = moveSpeed;
 };  // end moveDown()
 
@@ -134,7 +134,7 @@ var zeroXForce = function () {
 	xForce = 0;
 };  // end zeroXForce()
 
-var zeroYForce = function (  ) {
+var zeroYForce = function () {
 	yForce = 0;
 };  // end zeroYForce()
 
