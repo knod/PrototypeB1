@@ -35,7 +35,9 @@ Engine.run(_engine);
 // MY STUFF
 // ===================
 // Matter.js module aliases
-var Body = Matter.Body;
+var Body = Matter.Body,
+	Events = Matter.Events,
+	_sceneEvents = [];
 
 // Must create _engine.render this way? Not in docs, derived from
 // source code
@@ -45,10 +47,13 @@ _engine.render.controller.setBackground( _render, 'black' );
 // Preparing for floatyness
 _engine.world.gravity.y = 0;
 
-// Events
-var Events = Matter.Events,
-	_sceneEvents = [];
+// Movement values
+var yForce = 0;  // aternatives = up and down
+var xForce = 0;
 
+// Events
+
+// Tests
  _sceneEvents.push(
 
 	// an example of using mouse events on an engine.input.mouse
@@ -76,10 +81,32 @@ _sceneEvents.push(
 	})
 
 );
+// End Tests
+
+// atm, just for updating physics forces
+var afterUpdate = function ( event ) {
+	// Test
+	_render.controller.setBackground( _render, 'green' );
+
+	// Don't always do the whole calculation
+	// There will be a lot of times without movement methinks
+	if ( yForce != 0 || xForce != 0 ) {
+
+		Body.applyForce( playerBox, { x: 0, y: 0 }, { 
+			x: xForce, 
+			y: yForce
+		});
+
+	}
+
+}
+
+
+Events.on( _engine, "afterUpdate",  afterUpdate );
 
 
 // Movement
-var moveSpeed = 0.01;
+var moveSpeed = 0.005;
 
 var moveForce = function ( body, xForce, yForce ) {
 
@@ -90,38 +117,64 @@ var moveForce = function ( body, xForce, yForce ) {
 
 };  // end moveForce()
 
-var moveUp = function ( body ) {
-	moveForce( body, 0, -moveSpeed );
-};  // end moveUp()
+// var moveUp = function ( body ) {
+// 	moveForce( body, 0, -moveSpeed );
+// };  // end moveUp()
 
-var moveDown = function ( body ) {
-	moveForce( body, 0, moveSpeed );
-};  // end moveDown()
+// var moveDown = function ( body ) {
+// 	moveForce( body, 0, moveSpeed );
+// };  // end moveDown()
+
+// var moveLeft = function ( body ) {
+// 	moveForce( body, -moveSpeed, 0 );
+// };  // end moveLeft()
+
+// var moveRight = function ( body ) {
+// 	moveForce( body, moveSpeed, 0 );
+// };  // end moveRight()
+
 
 var moveLeft = function ( body ) {
-	moveForce( body, -moveSpeed, 0 );
+	xForce = -moveSpeed;
 };  // end moveLeft()
 
 var moveRight = function ( body ) {
-	moveForce( body, moveSpeed, 0 );
+	xForce = moveSpeed;
 };  // end moveRight()
 
-// Diagonals
-var moveLeftUp = function ( body ) {
-	moveForce( body, -moveSpeed, -moveSpeed );
-};  // end moveUpLeft()
+var moveUp = function ( body ) {
+	yForce = -moveSpeed;
+};  // end moveUp()
 
-var moveLeftDown = function ( body ) {
-	moveForce( body, -moveSpeed, moveSpeed );
-};  // end moveDownLeft()
+var moveDown = function ( body ) {
+	yForce = moveSpeed;
+};  // end moveDown()
 
-var moveRightUp = function ( body ) {
-	moveForce( body, moveSpeed, -moveSpeed );
-};  // end moveUpRight()
+var stopXMovement = function () {
+	xForce = 0;
+};
 
-var moveRightDown = function ( body ) {
-	moveForce( body, moveSpeed, moveSpeed );
-};  // end moveDownRight()
+var stopYMovement = function (  ) {
+	yForce = 0;
+};
+
+
+// // Diagonals
+// var moveLeftUp = function ( body ) {
+// 	moveForce( body, -moveSpeed, -moveSpeed );
+// };  // end moveUpLeft()
+
+// var moveLeftDown = function ( body ) {
+// 	moveForce( body, -moveSpeed, moveSpeed );
+// };  // end moveDownLeft()
+
+// var moveRightUp = function ( body ) {
+// 	moveForce( body, moveSpeed, -moveSpeed );
+// };  // end moveUpRight()
+
+// var moveRightDown = function ( body ) {
+// 	moveForce( body, moveSpeed, moveSpeed );
+// };  // end moveDownRight()
 
 // Keypress library
 var keypressjs = new window.keypress.Listener();
@@ -142,14 +195,14 @@ keypressjs.register_combo({
     "is_sequence"       : false
 });
 
-var moveUpPlayer = moveUp.bind( null, playerBox ),
-	moveDownPlayer = moveDown.bind( null, playerBox ),
-	moveLeftPlayer = moveLeft.bind( null, playerBox ),
-	moveRightPlayer = moveRight.bind( null, playerBox ),
-	moveLeftUpPlayer = moveLeftUp.bind( null, playerBox ),
-	moveLeftDownPlayer = moveLeftDown.bind( null, playerBox ),
-	moveRightUpPlayer = moveRightUp.bind( null, playerBox ),
-	moveRightDownPlayer = moveRightDown.bind( null, playerBox );
+// var moveUpPlayer = moveUp.bind( null, playerBox ),
+// 	moveDownPlayer = moveDown.bind( null, playerBox ),
+// 	moveLeftPlayer = moveLeft.bind( null, playerBox ),
+// 	moveRightPlayer = moveRight.bind( null, playerBox ),
+	// moveLeftUpPlayer = moveLeftUp.bind( null, playerBox ),
+	// moveLeftDownPlayer = moveLeftDown.bind( null, playerBox ),
+	// moveRightUpPlayer = moveRightUp.bind( null, playerBox ),
+	// moveRightDownPlayer = moveRightDown.bind( null, playerBox );
 
 // !!!!! I think the delay until key repeat is causing the
 // lurch. I think I need to have a key up and key down
@@ -158,86 +211,90 @@ var moveUpPlayer = moveUp.bind( null, playerBox ),
 // Up
 keypressjs.register_combo({
     "keys"              : "w",
-    "on_keydown"        : moveUpPlayer,
+    "on_keydown"        : moveUp,
+    "on_keyup"          : stopYMovement,
     "prevent_default"   : true
 });
 
 // Down
 keypressjs.register_combo({
     "keys"              : "s",
-    "on_keydown"        : moveDownPlayer,
+    "on_keydown"        : moveDown,
+    "on_keyup"          : stopYMovement,
     "prevent_default"   : true
 });
 
 // Left
 keypressjs.register_combo({
     "keys"              : "a",
-    "on_keydown"        : moveLeftPlayer,
+    "on_keydown"        : moveLeft,
+    "on_keyup"          : stopXMovement,
     "prevent_default"   : true
 });
 
 // Right
 keypressjs.register_combo({
     "keys"              : "d",
-    "on_keydown"        : moveRightPlayer,
+    "on_keydown"        : moveRight,
+    "on_keyup"          : stopXMovement,
     "prevent_default"   : true
 });
 
-// Diagonals with horizontals acting as modifier keys
-// Left Up
-keypressjs.register_combo({
-    "keys"              : "a w",
-    "on_keydown"        : moveLeftUpPlayer,
-    "prevent_default"   : true
-});
+// // Diagonals with horizontals acting as modifier keys
+// // Left Up
+// keypressjs.register_combo({
+//     "keys"              : "a w",
+//     "on_keydown"        : moveLeftUpPlayer,
+//     "prevent_default"   : true
+// });
 
-// Left Down
-keypressjs.register_combo({
-    "keys"              : "a s",
-    "on_keydown"        : moveLeftDownPlayer,
-    "prevent_default"   : true
-});
+// // Left Down
+// keypressjs.register_combo({
+//     "keys"              : "a s",
+//     "on_keydown"        : moveLeftDownPlayer,
+//     "prevent_default"   : true
+// });
 
-// Right Up
-keypressjs.register_combo({
-    "keys"              : "d w",
-    "on_keydown"        : moveRightUpPlayer,
-    "prevent_default"   : true
-});
+// // Right Up
+// keypressjs.register_combo({
+//     "keys"              : "d w",
+//     "on_keydown"        : moveRightUpPlayer,
+//     "prevent_default"   : true
+// });
 
-// Right Down
-keypressjs.register_combo({
-    "keys"              : "d s",
-    "on_keydown"        : moveRightDownPlayer,
-    "prevent_default"   : true
-});
+// // Right Down
+// keypressjs.register_combo({
+//     "keys"              : "d s",
+//     "on_keydown"        : moveRightDownPlayer,
+//     "prevent_default"   : true
+// });
 
-// Diagonals with veritcals acting as modifier keys
-// Left Up
-keypressjs.register_combo({
-    "keys"              : "w a",
-    "on_keydown"        : moveLeftUpPlayer,
-    "prevent_default"   : true
-});
+// // Diagonals with veritcals acting as modifier keys
+// // Left Up
+// keypressjs.register_combo({
+//     "keys"              : "w a",
+//     "on_keydown"        : moveLeftUpPlayer,
+//     "prevent_default"   : true
+// });
 
-// Left Down
-keypressjs.register_combo({
-    "keys"              : "s a",
-    "on_keydown"        : moveLeftDownPlayer,
-    "prevent_default"   : true
-});
+// // Left Down
+// keypressjs.register_combo({
+//     "keys"              : "s a",
+//     "on_keydown"        : moveLeftDownPlayer,
+//     "prevent_default"   : true
+// });
 
-// Right Up
-keypressjs.register_combo({
-    "keys"              : "w d",
-    "on_keydown"        : moveRightUpPlayer,
-    "prevent_default"   : true
-});
+// // Right Up
+// keypressjs.register_combo({
+//     "keys"              : "w d",
+//     "on_keydown"        : moveRightUpPlayer,
+//     "prevent_default"   : true
+// });
 
-// Right Down
-keypressjs.register_combo({
-    "keys"              : "s d",
-    "on_keydown"        : moveRightDownPlayer,
-    "prevent_default"   : true
-});
+// // Right Down
+// keypressjs.register_combo({
+//     "keys"              : "s d",
+//     "on_keydown"        : moveRightDownPlayer,
+//     "prevent_default"   : true
+// });
 
