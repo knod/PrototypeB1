@@ -3,6 +3,7 @@
 Resources:
 https://github.com/liabru/matter-js/wiki/Getting-started#usage-examples
 http://brm.io/matter-js-demo/
+http://dmauro.github.io/Keypress/
 */
 
 'use strict'
@@ -18,7 +19,7 @@ var _engine = Engine.create(document.body);
 
 // create two boxes and a ground
 var playerBox = Bodies.rectangle(400, 200, 40, 40);
-playerBox.frictionAir = 0.07;
+playerBox.frictionAir = 0.05;
 
 var boxB = Bodies.rectangle(450, 50, 80, 80);
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
@@ -78,69 +79,48 @@ _sceneEvents.push(
 
 
 // Movement
-var moveSpeed = 0.05;
+var moveSpeed = 0.01;
 
 var moveForce = function ( body, xForce, yForce ) {
 
-
-};  // end moveForce
-
-
-var moveUp = function ( body ) {
-
 	Body.applyForce( body, { x: 0, y: 0 }, { 
-		x: 0, 
-		y: -moveSpeed
+		x: xForce, 
+		y: yForce
 	});
 
+};  // end moveForce()
+
+var moveUp = function ( body ) {
+	moveForce( body, 0, -moveSpeed );
 };  // end moveUp()
 
 var moveDown = function ( body ) {
-
-	Body.applyForce( body, { x: 0, y: 0 }, { 
-		x: 0, 
-		y: moveSpeed
-	});
-
+	moveForce( body, 0, moveSpeed );
 };  // end moveDown()
 
 var moveLeft = function ( body ) {
-
-	Body.applyForce( body, { x: 0, y: 0 }, { 
-		x: -moveSpeed, 
-		y: 0
-	});
-
+	moveForce( body, -moveSpeed, 0 );
 };  // end moveLeft()
 
 var moveRight = function ( body ) {
-
-	Body.applyForce( body, { x: 0, y: 0 }, { 
-		x: moveSpeed, 
-		y: 0
-	});
-
+	moveForce( body, moveSpeed, 0 );
 };  // end moveRight()
 
 // Diagonals
-var moveUpLeft = function ( body ) {
-	moveUp( body );
-	moveLeft( body );
+var moveLeftUp = function ( body ) {
+	moveForce( body, -moveSpeed, -moveSpeed );
 };  // end moveUpLeft()
 
-var moveDownLeft = function ( body ) {
-	moveDown( body );
-	moveLeft( body );
+var moveLeftDown = function ( body ) {
+	moveForce( body, -moveSpeed, moveSpeed );
 };  // end moveDownLeft()
 
-var moveUpRight = function ( body ) {
-	moveUp( body );
-	moveRight( body );
+var moveRightUp = function ( body ) {
+	moveForce( body, moveSpeed, -moveSpeed );
 };  // end moveUpRight()
 
-var moveDownRight = function ( body ) {
-	moveDown( body );
-	moveRight( body );
+var moveRightDown = function ( body ) {
+	moveForce( body, moveSpeed, moveSpeed );
 };  // end moveDownRight()
 
 // Keypress library
@@ -166,10 +146,14 @@ var moveUpPlayer = moveUp.bind( null, playerBox ),
 	moveDownPlayer = moveDown.bind( null, playerBox ),
 	moveLeftPlayer = moveLeft.bind( null, playerBox ),
 	moveRightPlayer = moveRight.bind( null, playerBox ),
-	moveUpLeftPlayer = moveUpLeft.bind( null, playerBox ),
-	moveDownLeftPlayer = moveDownLeft.bind( null, playerBox ),
-	moveUpRightPlayer = moveUpRight.bind( null, playerBox ),
-	moveDownRightPlayer = moveDownRight.bind( null, playerBox );
+	moveLeftUpPlayer = moveLeftUp.bind( null, playerBox ),
+	moveLeftDownPlayer = moveLeftDown.bind( null, playerBox ),
+	moveRightUpPlayer = moveRightUp.bind( null, playerBox ),
+	moveRightDownPlayer = moveRightDown.bind( null, playerBox );
+
+// !!!!! I think the delay until key repeat is causing the
+// lurch. I think I need to have a key up and key down
+// event, but I'm not sure how to do that with diagonals
 
 // Up
 keypressjs.register_combo({
@@ -198,3 +182,62 @@ keypressjs.register_combo({
     "on_keydown"        : moveRightPlayer,
     "prevent_default"   : true
 });
+
+// Diagonals with horizontals acting as modifier keys
+// Left Up
+keypressjs.register_combo({
+    "keys"              : "a w",
+    "on_keydown"        : moveLeftUpPlayer,
+    "prevent_default"   : true
+});
+
+// Left Down
+keypressjs.register_combo({
+    "keys"              : "a s",
+    "on_keydown"        : moveLeftDownPlayer,
+    "prevent_default"   : true
+});
+
+// Right Up
+keypressjs.register_combo({
+    "keys"              : "d w",
+    "on_keydown"        : moveRightUpPlayer,
+    "prevent_default"   : true
+});
+
+// Right Down
+keypressjs.register_combo({
+    "keys"              : "d s",
+    "on_keydown"        : moveRightDownPlayer,
+    "prevent_default"   : true
+});
+
+// Diagonals with veritcals acting as modifier keys
+// Left Up
+keypressjs.register_combo({
+    "keys"              : "w a",
+    "on_keydown"        : moveLeftUpPlayer,
+    "prevent_default"   : true
+});
+
+// Left Down
+keypressjs.register_combo({
+    "keys"              : "s a",
+    "on_keydown"        : moveLeftDownPlayer,
+    "prevent_default"   : true
+});
+
+// Right Up
+keypressjs.register_combo({
+    "keys"              : "w d",
+    "on_keydown"        : moveRightUpPlayer,
+    "prevent_default"   : true
+});
+
+// Right Down
+keypressjs.register_combo({
+    "keys"              : "s d",
+    "on_keydown"        : moveRightDownPlayer,
+    "prevent_default"   : true
+});
+
