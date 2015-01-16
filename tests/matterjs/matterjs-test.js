@@ -34,6 +34,9 @@ Engine.run(_engine);
 // ===================
 // MY STUFF
 // ===================
+
+// SETUP
+// ===================
 // Matter.js module aliases
 var Body = Matter.Body,
 	Events = Matter.Events,
@@ -48,11 +51,13 @@ _engine.render.controller.setBackground( _render, 'black' );
 _engine.world.gravity.y = 0;
 
 // Movement values
+var moveSpeed = 0.003;
 var yForce = 0;  // aternatives = up and down
 var xForce = 0;
 
-// Events
 
+// EVENTS
+// ========
 // Tests
  _sceneEvents.push(
 
@@ -83,31 +88,8 @@ _sceneEvents.push(
 );
 // End Tests
 
-// atm, just for updating physics forces
-var afterUpdate = function ( event ) {
-	// Test
-	_render.controller.setBackground( _render, 'green' );
 
-	// Don't always do the whole calculation
-	// There will be a lot of times without movement methinks
-	if ( yForce != 0 || xForce != 0 ) {
-
-		Body.applyForce( playerBox, { x: 0, y: 0 }, { 
-			x: xForce, 
-			y: yForce
-		});
-
-	}
-
-}
-
-
-Events.on( _engine, "afterUpdate",  afterUpdate );
-
-
-// Movement
-var moveSpeed = 0.005;
-
+// MOVEMENT
 var moveForce = function ( body, xForce, yForce ) {
 
 	Body.applyForce( body, { x: 0, y: 0 }, { 
@@ -117,21 +99,19 @@ var moveForce = function ( body, xForce, yForce ) {
 
 };  // end moveForce()
 
-// var moveUp = function ( body ) {
-// 	moveForce( body, 0, -moveSpeed );
-// };  // end moveUp()
+// atm, just for updating physics forces
+var afterUpdate = function ( event ) {
 
-// var moveDown = function ( body ) {
-// 	moveForce( body, 0, moveSpeed );
-// };  // end moveDown()
+	// Don't always do the whole calculation
+	// There will be a lot of times without movement methinks
+	if ( yForce != 0 || xForce != 0 ) {
+		moveForce( playerBox, xForce, yForce );
+	}
 
-// var moveLeft = function ( body ) {
-// 	moveForce( body, -moveSpeed, 0 );
-// };  // end moveLeft()
+}
 
-// var moveRight = function ( body ) {
-// 	moveForce( body, moveSpeed, 0 );
-// };  // end moveRight()
+
+Events.on( _engine, "afterUpdate",  afterUpdate );
 
 
 var moveLeft = function ( body ) {
@@ -150,31 +130,14 @@ var moveDown = function ( body ) {
 	yForce = moveSpeed;
 };  // end moveDown()
 
-var stopXMovement = function () {
+var zeroXForce = function () {
 	xForce = 0;
-};
+};  // end zeroXForce()
 
-var stopYMovement = function (  ) {
+var zeroYForce = function (  ) {
 	yForce = 0;
-};
+};  // end zeroYForce()
 
-
-// // Diagonals
-// var moveLeftUp = function ( body ) {
-// 	moveForce( body, -moveSpeed, -moveSpeed );
-// };  // end moveUpLeft()
-
-// var moveLeftDown = function ( body ) {
-// 	moveForce( body, -moveSpeed, moveSpeed );
-// };  // end moveDownLeft()
-
-// var moveRightUp = function ( body ) {
-// 	moveForce( body, moveSpeed, -moveSpeed );
-// };  // end moveUpRight()
-
-// var moveRightDown = function ( body ) {
-// 	moveForce( body, moveSpeed, moveSpeed );
-// };  // end moveDownRight()
 
 // Keypress library
 var keypressjs = new window.keypress.Listener();
@@ -195,24 +158,11 @@ keypressjs.register_combo({
     "is_sequence"       : false
 });
 
-// var moveUpPlayer = moveUp.bind( null, playerBox ),
-// 	moveDownPlayer = moveDown.bind( null, playerBox ),
-// 	moveLeftPlayer = moveLeft.bind( null, playerBox ),
-// 	moveRightPlayer = moveRight.bind( null, playerBox ),
-	// moveLeftUpPlayer = moveLeftUp.bind( null, playerBox ),
-	// moveLeftDownPlayer = moveLeftDown.bind( null, playerBox ),
-	// moveRightUpPlayer = moveRightUp.bind( null, playerBox ),
-	// moveRightDownPlayer = moveRightDown.bind( null, playerBox );
-
-// !!!!! I think the delay until key repeat is causing the
-// lurch. I think I need to have a key up and key down
-// event, but I'm not sure how to do that with diagonals
-
 // Up
 keypressjs.register_combo({
     "keys"              : "w",
     "on_keydown"        : moveUp,
-    "on_keyup"          : stopYMovement,
+    "on_keyup"          : zeroYForce,
     "prevent_default"   : true
 });
 
@@ -220,7 +170,7 @@ keypressjs.register_combo({
 keypressjs.register_combo({
     "keys"              : "s",
     "on_keydown"        : moveDown,
-    "on_keyup"          : stopYMovement,
+    "on_keyup"          : zeroYForce,
     "prevent_default"   : true
 });
 
@@ -228,7 +178,7 @@ keypressjs.register_combo({
 keypressjs.register_combo({
     "keys"              : "a",
     "on_keydown"        : moveLeft,
-    "on_keyup"          : stopXMovement,
+    "on_keyup"          : zeroXForce,
     "prevent_default"   : true
 });
 
@@ -236,65 +186,6 @@ keypressjs.register_combo({
 keypressjs.register_combo({
     "keys"              : "d",
     "on_keydown"        : moveRight,
-    "on_keyup"          : stopXMovement,
+    "on_keyup"          : zeroXForce,
     "prevent_default"   : true
 });
-
-// // Diagonals with horizontals acting as modifier keys
-// // Left Up
-// keypressjs.register_combo({
-//     "keys"              : "a w",
-//     "on_keydown"        : moveLeftUpPlayer,
-//     "prevent_default"   : true
-// });
-
-// // Left Down
-// keypressjs.register_combo({
-//     "keys"              : "a s",
-//     "on_keydown"        : moveLeftDownPlayer,
-//     "prevent_default"   : true
-// });
-
-// // Right Up
-// keypressjs.register_combo({
-//     "keys"              : "d w",
-//     "on_keydown"        : moveRightUpPlayer,
-//     "prevent_default"   : true
-// });
-
-// // Right Down
-// keypressjs.register_combo({
-//     "keys"              : "d s",
-//     "on_keydown"        : moveRightDownPlayer,
-//     "prevent_default"   : true
-// });
-
-// // Diagonals with veritcals acting as modifier keys
-// // Left Up
-// keypressjs.register_combo({
-//     "keys"              : "w a",
-//     "on_keydown"        : moveLeftUpPlayer,
-//     "prevent_default"   : true
-// });
-
-// // Left Down
-// keypressjs.register_combo({
-//     "keys"              : "s a",
-//     "on_keydown"        : moveLeftDownPlayer,
-//     "prevent_default"   : true
-// });
-
-// // Right Up
-// keypressjs.register_combo({
-//     "keys"              : "w d",
-//     "on_keydown"        : moveRightUpPlayer,
-//     "prevent_default"   : true
-// });
-
-// // Right Down
-// keypressjs.register_combo({
-//     "keys"              : "s d",
-//     "on_keydown"        : moveRightDownPlayer,
-//     "prevent_default"   : true
-// });
-
