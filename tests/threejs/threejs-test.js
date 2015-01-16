@@ -24,17 +24,26 @@ var VIEW_ANGLE = 45,
 // - assume we've got jQuery to hand
 // var $container = $('#container');
 
-var viewport = document.getElementById('viewport');
+var viewport = document.getElementById( 'viewport' );
 
 // create a WebGL renderer, camera
 // and a scene
-var renderer = new THREE.WebGLRenderer({canvas: viewport });
+var renderer = new THREE.WebGLRenderer({ canvas: viewport });
 var camera =
   new THREE.PerspectiveCamera(
     VIEW_ANGLE,
     ASPECT,
     NEAR,
     FAR);
+
+var camera = new THREE.OrthographicCamera(
+    WIDTH/-2,
+    WIDTH/2,
+    HEIGHT/-2,
+    HEIGHT/2,
+    -100,
+    100
+);
 
 var scene = new THREE.Scene();
 
@@ -43,7 +52,7 @@ scene.add(camera);
 
 // the camera starts at 0,0,0
 // so pull it back
-camera.position.z = 700;
+camera.position.z = 1000;
 
 // // start the renderer
 // renderer.setSize(WIDTH, HEIGHT);
@@ -99,14 +108,15 @@ scene.add(pointLight);
 
 
 var playerCube = new THREE.Mesh( new THREE.BoxGeometry( 40, 40, 40 ), new THREE.MeshNormalMaterial() );
-playerCube.position.x = 0;
-playerCube.position.y = 0;
+playerCube.position.x = 400;
+playerCube.position.y = 200;
 playerCube.position.z = 0;
 scene.add( playerCube );
 
-var cubeB = new THREE.Mesh( new THREE.BoxGeometry( 40, 40, 40 ), new THREE.MeshNormalMaterial() );
+var cubeB = new THREE.Mesh( new THREE.BoxGeometry( 80, 80, 80 ), new THREE.MeshNormalMaterial() );
 cubeB.position.x = 450;
 cubeB.position.y = 50;
+playerCube.position.z = 0;
 scene.add( cubeB );
 
 
@@ -168,7 +178,7 @@ renderer.render(scene, camera);
 // 	playerCube.position.z = 0;
 // 	scene.add( playerCube );
 
-// 	cubeB = new THREE.Mesh( new THREE.BoxGeometry( 40, 40, 40 ), new THREE.MeshNormalMaterial() );
+// 	cubeB = new THREE.Mesh( new THREE.BoxGeometry( 80, 80, 80 ), new THREE.MeshNormalMaterial() );
 // 	cubeB.position.x = 450;
 // 	cubeB.position.y = 50;
 // 	scene.add( cubeB );
