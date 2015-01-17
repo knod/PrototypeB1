@@ -30,10 +30,10 @@ var Engine = Matter.Engine,
 	Body = Matter.Body,
 	Events = Matter.Events;
 
-// var pixi = Matter.RenderPixi.create();
+var pixi = Matter.RenderPixi.create();
 
 // create a Matter.js engine
-var _engine = Engine.create(document.body);
+var _engine = Engine.create(document.body, {render: pixi} );
 
 // Preparing for floatyness
 _engine.world.gravity.y = 0;
@@ -53,6 +53,7 @@ var VIEW_ANGLE = 45,
 	NEAR = 0.1,
 	FAR = 10000;
 
+// From yansanmo
 var detectCanvasContext = function ( canvas ) {
 
 	var s = ["2d", "webgl", "webgl2", "experimental-webgl", "experimental-webgl2"];
@@ -70,10 +71,11 @@ var detectCanvasContext = function ( canvas ) {
 detectCanvasContext( matterCanvas );
 
 // Threejs works with this canvas, but not with the matterjs canvas
-var viewport = document.getElementById( 'viewport' );
+// var viewport = document.getElementById( 'viewport' );
 // console.log(viewport.canvas);
 // console.log(matterCanvas.canvas);
-var renderer = new THREE.CanvasRenderer({ canvas: matterCanvas });
+// var renderer = new THREE.CanvasRenderer({ canvas: matterCanvas });
+var renderer = new THREE.WebGLRenderer({ canvas: matterCanvas });
 var scene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera(
@@ -107,6 +109,8 @@ var playerPos = [ 0, 0, 0 ],
 //combo.box( World, Bodies, engine, scene, height, position, size, isStatic, airFriction, moveSpeed )
 var player = combo.box( World, Bodies, _engine, scene, HEIGHT,
 	playerPos, playerSize, playerIsStatic, playerAirFriction, playerMoveSpeed );
+var playerMatter = player[0];
+var playerThree = player[1];
 
 var cubeB = new THREE.Mesh( new THREE.BoxGeometry( 80, 80, 80 ), new THREE.MeshNormalMaterial() );
 cubeB.position.x = 450;
@@ -120,7 +124,7 @@ scene.add(axes)
 
 
 // set the geometry to dynamic so that it allow updates
-player.geometry.dynamic = true;
+playerThree.geometry.dynamic = true;
 cubeB.geometry.dynamic = true;
 axes.geometry.dynamic = true;
 
@@ -187,7 +191,7 @@ keypressjs.register_combo({
 // atm, just for updating physics forces
 var afterUpdate = function ( event ) {
 
-	var bodies = Composite.allBodies( event.world );
+	var bodies = Matter.Composite.allBodies( event.world );
 
     for (var bodyIndx = 0; bodyIndx < bodies.length; bodyIndx++) {
         var body = bodies[ bodyIndx ];

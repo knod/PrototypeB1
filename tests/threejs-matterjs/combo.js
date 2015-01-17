@@ -91,7 +91,7 @@ objects.
 	if (moveSpeed) { matterBox.moveSpeed = moveSpeed; }
 
 	// Match x and y pos using matterjs, then set z pos
-	updateGraphicsToPhysics( matterBox, threeCube, height );
+	combo.updateGraphicsToPhysics( matterBox, threeCube, height );
 	threeCube.position.z = posZ;
 
 	// Add to list of objects?
