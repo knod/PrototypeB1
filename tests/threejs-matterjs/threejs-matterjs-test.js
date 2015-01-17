@@ -30,7 +30,12 @@ var Engine = Matter.Engine,
 	Body = Matter.Body,
 	Events = Matter.Events;
 
-var pixi = Matter.RenderPixi.create();
+var viewport = document.getElementById( 'viewport' );
+var docBody = document.body;
+
+var pixi = Matter.RenderPixi.create( {element: docBody, 
+	// canvas: viewport
+} );
 
 // create a Matter.js engine
 var _engine = Engine.create(document.body, {render: pixi} );
@@ -190,8 +195,9 @@ keypressjs.register_combo({
 // ==============
 // atm, just for updating physics forces
 var afterUpdate = function ( event ) {
+	// The payload
 
-	var bodies = Matter.Composite.allBodies( event.world );
+	var bodies = Matter.Composite.allBodies( event.source.world );
 
     for (var bodyIndx = 0; bodyIndx < bodies.length; bodyIndx++) {
         var body = bodies[ bodyIndx ];
@@ -203,11 +209,10 @@ var afterUpdate = function ( event ) {
         }
 
         if ( body.threeObj ) {
-			combo.updateGraphicsToPhysics( body, body.threeObj, height );
+			combo.updateGraphicsToPhysics( body, body.threeObj, HEIGHT );
         }
 
 	}
-
 
 	// Render the scene.
 	renderer.render(scene, camera);
