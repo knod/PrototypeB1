@@ -30,6 +30,8 @@ var Engine = Matter.Engine,
 	Body = Matter.Body,
 	Events = Matter.Events;
 
+// var pixi = Matter.RenderPixi.create();
+
 // create a Matter.js engine
 var _engine = Engine.create(document.body);
 
@@ -51,10 +53,27 @@ var VIEW_ANGLE = 45,
 	NEAR = 0.1,
 	FAR = 10000;
 
+var detectCanvasContext = function ( canvas ) {
+
+	var s = ["2d", "webgl", "webgl2", "experimental-webgl", "experimental-webgl2"];
+	var context = null; 
+	for(var i = 0; i < s.length; i++) { 
+		context = matterCanvas.getContext(s[i]); 
+		if (context) { break; } 
+	}
+
+	console.log(context);
+	console.log(Object.prototype.toString.call(context));
+
+};  // end detectCanvasContext()
+
+detectCanvasContext( matterCanvas );
+
+// Threejs works with this canvas, but not with the matterjs canvas
 var viewport = document.getElementById( 'viewport' );
-console.log(viewport);
-console.log(matterCanvas);
-var renderer = new THREE.WebGLRenderer({ canvas: matterCanvas });
+// console.log(viewport.canvas);
+// console.log(matterCanvas.canvas);
+var renderer = new THREE.CanvasRenderer({ canvas: matterCanvas });
 var scene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera(
