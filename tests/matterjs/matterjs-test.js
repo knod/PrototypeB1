@@ -11,8 +11,8 @@ http://dmauro.github.io/Keypress/
 // https://github.com/liabru/matter-js/wiki/Getting-started#usage-examples
 // Matter.js module aliases
 var Engine = Matter.Engine,
-    World = Matter.World,
-    Bodies = Matter.Bodies;
+	World = Matter.World,
+	Bodies = Matter.Bodies;
 
 // create a Matter.js engine
 var _engine = Engine.create(document.body);
@@ -40,6 +40,7 @@ Engine.run(_engine);
 // Matter.js module aliases
 var Body = Matter.Body,
 	Events = Matter.Events,
+	// Tests
 	_sceneEvents = [];
 
 // Must create _engine.render this way? Not in docs, derived from
