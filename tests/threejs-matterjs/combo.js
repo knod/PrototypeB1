@@ -13,6 +13,12 @@ http://rinesh.in/lab/airhockeywebgl/
 // TODO: Give own combo script
 var combo = {};
 
+combo.convertYToMatterY = function ( yPos, height ) {
+
+	return yPos + height;	
+
+};  // end combo.convertYToMatterY()
+
 // Update graphics based on physics objects
 combo.updateGraphicsToPhysics = function ( body, object, height ) {
 	

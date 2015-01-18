@@ -34,8 +34,13 @@ var viewport = document.getElementById( 'viewport' );
 var docBody = document.body;
 
 var pixi = Matter.RenderPixi.create( {element: docBody, 
-	// canvas: viewport
+	// // canvas: viewport
+	// options: { wireframe: false, background: 'transparent',
+	// 	wireframes: false//,
+	// 	// wireframeBackground: false 
+	// }
 } );
+// pixi.options.background = 'transparent';
 
 // create a Matter.js engine
 var _engine = Engine.create(document.body, {render: pixi} );
@@ -48,16 +53,6 @@ _engine.world.gravity.y = 0;
 // Get the canvas from matterjs
 var matterCanvas = _engine.render.canvas;
 
-// set the scene size
-var WIDTH = matterCanvas.width,
-	HEIGHT = matterCanvas.height;
-
-// set some camera attributes
-var VIEW_ANGLE = 45,
-	ASPECT = WIDTH / HEIGHT,
-	NEAR = 0.1,
-	FAR = 10000;
-
 // From yansanmo
 var detectCanvasContext = function ( canvas ) {
 
@@ -68,18 +63,23 @@ var detectCanvasContext = function ( canvas ) {
 		if (context) { break; } 
 	}
 
-	console.log(context);
+	// console.log(context);
 	console.log(Object.prototype.toString.call(context));
 
 };  // end detectCanvasContext()
 
 detectCanvasContext( matterCanvas );
 
-// Threejs works with this canvas, but not with the matterjs canvas
-// var viewport = document.getElementById( 'viewport' );
-// console.log(viewport.canvas);
-// console.log(matterCanvas.canvas);
-// var renderer = new THREE.CanvasRenderer({ canvas: matterCanvas });
+// set the scene size
+var WIDTH = matterCanvas.width,
+	HEIGHT = matterCanvas.height;
+
+// set some camera attributes
+var VIEW_ANGLE = 45,
+	ASPECT = WIDTH / HEIGHT,
+	NEAR = 0.1,
+	FAR = 10000;
+
 var renderer = new THREE.WebGLRenderer({ canvas: matterCanvas });
 var scene = new THREE.Scene();
 
@@ -111,6 +111,8 @@ var playerPos = [ 0, 0, 0 ],
 	playerAirFriction = 0.05,
 	playerMoveSpeed = 0.003;
 
+playerPos[1] = combo.convertYToMatterY( 0, HEIGHT );
+
 //combo.box( World, Bodies, engine, scene, height, position, size, isStatic, airFriction, moveSpeed )
 var player = combo.box( World, Bodies, _engine, scene, HEIGHT,
 	playerPos, playerSize, playerIsStatic, playerAirFriction, playerMoveSpeed );
@@ -118,7 +120,7 @@ var playerMatter = player[0];
 var playerThree = player[1];
 
 var cubeB = new THREE.Mesh( new THREE.BoxGeometry( 80, 80, 80 ), new THREE.MeshNormalMaterial() );
-cubeB.position.x = 450;
+cubeB.position.x = 500;
 cubeB.position.y = HEIGHT - 50;
 cubeB.position.z = 0;
 scene.add( cubeB );
@@ -199,12 +201,14 @@ var afterUpdate = function ( event ) {
 
 	var bodies = Matter.Composite.allBodies( event.source.world );
 
+
     for (var bodyIndx = 0; bodyIndx < bodies.length; bodyIndx++) {
         var body = bodies[ bodyIndx ];
 
 		// Don't always do the whole calculation
 		// There will be a lot of times without movement methinks
         if ( body.xImpulse != 0 || body.yImpulse != 0 ) {
+        	console.log("impulse");
         	moveForce( body, body.xImpulse, body.yImpulse );
         }
 
@@ -214,12 +218,31 @@ var afterUpdate = function ( event ) {
 
 	}
 
-	// Render the scene.
+	// Render the scene with threejs
 	renderer.render(scene, camera);
 
 };
 
 Events.on( _engine, "afterUpdate",  afterUpdate );
+
+
+var _sceneEvents = [];
+var _render = _engine.render.controller.create(_engine.render)
+_sceneEvents.push(
+
+	// an example of using mouse events on an engine.input.mouse
+	Events.on(_engine, 'mousedown', function(event) {
+		var mousePosition = event.mouse.position;
+		console.log('mousedown at ' + mousePosition.x + ' ' + mousePosition.y);
+		// From Demo, doesn't work
+		_engine.render.options.background = 'blue';
+		// Works, not in docs, derived from source code
+		_render.controller.setBackground( _render, 'green' );
+		// Works, but it's in the lib's definition, so not sure I should use
+		_engine.render.canvas.style.background = "white";
+	})
+
+);
 
 
 // Render the scene.
