@@ -215,23 +215,23 @@ var afterUpdate = function ( event ) {
 Events.on( _engine, "afterUpdate",  afterUpdate );
 
 
-var _sceneEvents = [];
-var _render = _engine.render.controller.create(_engine.render)
-_sceneEvents.push(
+// var _sceneEvents = [];
+// var _render = _engine.render.controller.create(_engine.render)
+// _sceneEvents.push(
 
-	// an example of using mouse events on an engine.input.mouse
-	Events.on(_engine, 'mousedown', function(event) {
-		var mousePosition = event.mouse.position;
-		console.log('mousedown at ' + mousePosition.x + ' ' + mousePosition.y);
-		// From Demo, doesn't work
-		_engine.render.options.background = 'blue';
-		// Works, not in docs, derived from source code
-		_render.controller.setBackground( _render, 'green' );
-		// Works, but it's in the lib's definition, so not sure I should use
-		_engine.render.canvas.style.background = "white";
-	})
+// 	// an example of using mouse events on an engine.input.mouse
+// 	Events.on(_engine, 'mousedown', function(event) {
+// 		var mousePosition = event.mouse.position;
+// 		console.log('mousedown at ' + mousePosition.x + ' ' + mousePosition.y);
+// 		// From Demo, doesn't work
+// 		_engine.render.options.background = 'blue';
+// 		// Works, not in docs, derived from source code
+// 		_render.controller.setBackground( _render, 'green' );
+// 		// Works, but it's in the lib's definition, so not sure I should use
+// 		_engine.render.canvas.style.background = "white";
+// 	})
 
-);
+// );
 
 
 // Render the scene.
