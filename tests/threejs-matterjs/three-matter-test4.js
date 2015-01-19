@@ -118,6 +118,9 @@ playerThree.position.y = HEIGHT - 0;
 playerThree.position.z = 0;
 scene.add( playerThree );
 
+playerMatter.threeObj = playerThree;
+
+
 var boxB = Bodies.rectangle(450, 50, 80, 80);
 World.add(_engine.world, [boxB]);
 
@@ -126,6 +129,8 @@ cubeB.position.x = 500;
 cubeB.position.y = HEIGHT - 50;
 cubeB.position.z = 0;
 scene.add( cubeB );
+
+boxB.threeObj = cubeB;
 
 // Don't really need this
 var axes = new THREE.AxisHelper(20)
@@ -149,9 +154,22 @@ var afterUpdate = function ( event ) {
 		y: 0
 	});
 
-	if( playerMatter.position && playerThree ) {
-		playerThree.position.x = playerMatter.position.x;
-		playerThree.position.y = HEIGHT - playerMatter.position.y;
+	var bodies = Matter.Composite.allBodies( event.source.world );
+
+
+    for (var bodyIndx = 0; bodyIndx < bodies.length; bodyIndx++) {
+        var body = bodies[ bodyIndx ];
+
+        if ( body.threeObj ) {
+        	var threeObj = body.threeObj;
+
+			threeObj.position.x = body.position.x;
+			threeObj.position.y = HEIGHT - body.position.y;
+
+			threeObj.rotation.z = -body.angle;
+
+        }
+
 	}
 
 	// Render the scene with threejs
