@@ -30,20 +30,9 @@ var Engine = Matter.Engine,
 	Body = Matter.Body,
 	Events = Matter.Events;
 
-var viewport = document.getElementById( 'viewport' );
-var docBody = document.body;
-
-var pixi = Matter.RenderPixi.create( {element: docBody, 
-	// // canvas: viewport
-	// options: { wireframe: false, background: 'transparent',
-	// 	wireframes: false//,
-	// 	// wireframeBackground: false 
-	// }
-} );
-// pixi.options.background = 'transparent';
-
 // create a Matter.js engine
-var _engine = Engine.create(document.body, {render: pixi} );
+var _engine = Engine.create(document.body, {render: Matter.RenderPixi} );
+_engine.render.canvas.style.background = "rgba(0, 0, 0, 0)";
 
 // Preparing for floatyness
 _engine.world.gravity.y = 0;
