@@ -137,6 +137,32 @@ cubeB.geometry.dynamic = true;
 axes.geometry.dynamic = true;
 
 
+// ==============
+// UPDATE
+// ==============
+// atm, just for updating physics forces
+var afterUpdate = function ( event ) {
+	// The payload
+
+	Body.applyForce( playerMatter, { x: 0, y: 0 }, { 
+		x: 0.001, 
+		y: 0
+	});
+
+	if( playerMatter.position && playerThree ) {
+		playerThree.position.x = playerMatter.position.x;
+		playerThree.position.y = HEIGHT - playerMatter.position.y;
+	}
+
+	// Render the scene with threejs
+	renderer.render(scene, camera);
+
+};
+
+Events.on( _engine, "afterUpdate",  afterUpdate );
+
+
+
 // Go!
 Engine.run(_engine);
 renderer.render(scene, camera);
