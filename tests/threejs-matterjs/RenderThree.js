@@ -24,6 +24,8 @@ var RenderThree = {};
      */
     RenderThree.create = function( canvas ) {
 
+    	return { controller: RenderThree };
+
     };
 
     /**
@@ -52,7 +54,7 @@ var RenderThree = {};
      */
     RenderThree.world = function( renderer, scene, camera ) {
 
-		renderer.render(scene, camera);
+		// renderer.render(scene, camera);
 
     };
 
