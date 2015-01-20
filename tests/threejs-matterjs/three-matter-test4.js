@@ -68,7 +68,9 @@ var WIDTH = viewport.width,
 // set some camera attributes
 var VIEW_ANGLE = 45,
 	ASPECT = WIDTH / HEIGHT,
+	// This can be up to 960 and still look the same
 	NEAR = 0.1,
+	// For some reason this needs to be 1000
 	FAR = 10000;
 
 var renderer = new THREE.WebGLRenderer({ canvas: viewport });
@@ -81,8 +83,9 @@ var camera = new THREE.PerspectiveCamera(
 // needed? (See threejs-test2.js)
 scene.add(camera);
 // the camera starts at 0,0,0, so pull it back
-camera.position.z = 1000;
-camera.position.set( WIDTH/2, HEIGHT/2, 1000 );
+// Doesn't seem to matter what value I give here
+camera.position.z = -100;
+camera.position.set( WIDTH/2, HEIGHT/2, 800 );
 
 // create a point light
 var pointLight = new THREE.PointLight(0xFFFFFF);
@@ -109,12 +112,12 @@ playerPos[1] = combo.convertYToMatterY( 0, HEIGHT );
 // 	playerPos, playerSize, playerIsStatic, playerAirFriction, playerMoveSpeed );
 // var playerMatter = player[0];
 // var playerThree = player[1];
-var playerMatter = Bodies.rectangle(0, 0, 40, 40);
+var playerMatter = Bodies.rectangle(20, 20, 40, 40);
 World.add(_engine.world, [playerMatter]);
 
 var playerThree = new THREE.Mesh( new THREE.BoxGeometry( 40, 40, 40 ), new THREE.MeshNormalMaterial() );
-playerThree.position.x = 0;
-playerThree.position.y = HEIGHT - 0;
+playerThree.position.x = 20;
+playerThree.position.y = HEIGHT - 20;
 playerThree.position.z = 0;
 scene.add( playerThree );
 
